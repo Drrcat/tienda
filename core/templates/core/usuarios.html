@@ -1,0 +1,103 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="container-title">
+  <h1 class="text-center">Administración de usuarios</h1>
+</div>
+<br>
+<br>
+
+<form id="form" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="row">
+
+
+    <div class="col-sm-12 col-md-4">
+      {{ user_form|as_bootstrap_form }}
+    </div>
+
+    <div class="col-sm-12 col-md-5">
+      {{ perfil_form|as_bootstrap_form }}
+    </div>
+
+    <!-- AREA DE IMAGEN DE PERFIL -->
+    <div class="col-sm-12 col-md-3 text-center">
+      <div class="row">
+        <!-- AREA DE CUADRO DE IMAGEN: Muestra la Imagen de perfil -->
+        <div class="col-sm-12" style="height: 220px">
+          <img id="cuadro-imagen" src="{% static 'core/img/sin-imagen.png' %}">
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- AREA DE BOTONES -->
+  <div class="mt-2 text-center">
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="{% url 'usuarios' 'crear' '0' %}" class="btn btn-primary">Nuevo</a>
+    <button onclick="event.preventDefault(); document.getElementById('id_imagen').click();"
+      class="btn btn-primary">Seleccionar imagen</button>
+    {% if user_form.instance.id %}
+    <a class="btn btn-primary" href="{% url 'usuarios' 'eliminar' user_form.instance.id %}">Eliminar</a>
+    {% endif %}
+  </div>
+  <input type="file" id="id_imagen" name="imagen" style="display: none;">
+  </div>
+
+</form>
+
+<!-- AREA DE TABLA DE USUARIOS -->
+{% if usuarios %}
+<table id="tabla-principal" class="table table-hover">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cuenta</th>
+      <th>Tipo usuario</th>
+      <th>Nombre</th>
+      <th>Apellidos</th>
+      <th>Correo</th>
+      <th>RUT</th>
+      <th>Subscrito</th>
+      <th>Imagen</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for usuario in usuarios %}
+    <tr>
+      <td>{{ usuario.id }}</td>
+      <td>{{ usuario.username }}</td>
+      <td>{{ usuario.perfil.tipo_usuario }}</td>
+      <td>{{ usuario.first_name }}</td>
+      <td>{{ usuario.last_name }}</td>
+      <td>{{ usuario.email }}</td>
+      <td>{{ usuario.perfil.rut }}</td>
+      <td>{% if usuario.perfil.subscrito %} Sí {% else %} No {% endif %}</td>
+      <td><img src="/media/{{ usuario.perfil.imagen }}" class="usuario-sm" alt=""></td>
+      <td>
+        <div class="btn-group">
+          <a href="{% url 'usuarios' 'actualizar' usuario.id %}" class="btn btn-primary btn-sm">Editar</a>
+          <a href="{% url 'usuarios' 'eliminar' usuario.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+          <form action="{% url 'cambiar_password' %}" method="post" id="form_{{ usuario.username }}">
+            {% csrf_token %}
+            <input type="hidden" id="username" name="username" value="{{ usuario.username }}">
+            <button class="btn btn-info btn-sm" id="id_generar_password"
+              onclick="document.getElementById('form_{{ usuario.username }}').submit();">Contraseña</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock content %}
+
+{% block script %}
+<script src="{% static 'core/js/usuarios.js' %}"></script>
+{% endblock script %}

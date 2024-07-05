@@ -1,0 +1,99 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container-title">
+  <h1 class="text-center">Registro de cliente</h1>
+</div>
+<br><br>
+
+<!-- Formulario de registro de cliente -->
+<form id="form" method="POST" enctype="multipart/form-data" class="row g-3 needs-validation" novalidate>
+  {% csrf_token %}
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <!-- Campos del formulario -->
+      <div class="col-sm-12 col-md-4">
+
+        <div class="mb-3">
+          <label for="id_first_name" class="form-label">Nombres de usuario</label>
+          {{ usuario_form.username|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_rut" class="form-label">RUT</label>
+          {{ perfil_form.rut|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_first_name" class="form-label">Nombres</label>
+          {{ usuario_form.first_name|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_last_name" class="form-label">Apellidos</label>
+          {{ usuario_form.last_name|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_email" class="form-label">Correo</label>
+          {{ usuario_form.email|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_direccion" class="form-label">Dirección</label>
+          {{ perfil_form.direccion|add_class:"form-control" }}
+          <div id="direccionHelp" class="form-text">
+            Escribe tu dirección.
+          </div>
+        </div>
+
+        <div class="mb-3 form-check">
+          {{ perfil_form.subscrito|add_class:"form-check-input" }}
+          <label class="form-check-label" for="id_subscrito">
+            Deseo subscribirme con un aporte de $2000 mensuales a la fundación "Mascotas felices" y obtener un 5% de
+            descuento en mis compras.
+          </label>
+        </div>
+
+        <div class="mb-3">
+          <label for="id_password1" class="form-label">Contraseña</label>
+          {{ usuario_form.password1|add_class:"form-control" }}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_password2" class="form-label">Repetir Contraseña</label>
+          {{ usuario_form.password2|add_class:"form-control" }}
+        </div>
+
+      </div>
+
+      <div class="col-sm-12 col-md-3 text-center">
+        <div class="row">
+          <!-- AREA DE CUADRO DE IMAGEN: Muestra la Imagen de perfil -->
+          <div class="col-sm-12" style="height: 220px">
+            <img id="cuadro-imagen" src="{% static 'core/img/sin-imagen.png' %}">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- AREA DE BOTONES -->
+    <div class="mt-2 mb-3 text-center">
+      <button type="submit" class="btn btn-primary">Registrarme</button>
+      <button type="reset" id="limpiar_formulario" class="btn btn-secondary">Limpiar</button>
+      <button class="btn btn-secondary"
+        onclick="event.preventDefault(); document.getElementById('id_imagen').click();">Seleccionar imagen</button>
+      <button id="crear_usuario_prueba" class="btn btn-secondary">Crear usuario de prueba</button>
+      <input type="file" id="id_imagen" name="imagen" style="display: none;" />
+    </div>
+
+  </div>
+</form>
+{% endblock content %}
+
+{% block script %}
+<script src="{% static 'core/js/registrarme.js' %}"></script>
+{% endblock script %}

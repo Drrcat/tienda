@@ -1,0 +1,79 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+<form id="form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="row justify-content-center">
+        <div class="col-sm-12 col-md-5">
+            {{ form|as_bootstrap_form }}
+        </div>
+
+        <!-- AREA DE IMAGEN DE PERFIL -->
+        <div class="col-sm-12 col-md-3 text-center">
+            <div class="row">
+                <!-- AREA DE CUADRO DE IMAGEN: Muestra la Imagen de perfil -->
+                <div class="col-sm-12" style="height: 220px">
+                    <img id="cuadro-imagen" src="{% static 'core/img/sin-imagen.png' %}">
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones para guardar y agregar -->
+        <div class="col-sm-12 mt-3 text-center">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="button" id="btn-agregar" class="btn btn-success ml-2">Agregar</button>
+        </div>
+    </div>
+
+</form>
+<!-- TABLA DE PRODUCTOS -->
+{% if productos %}
+
+<table id="tabla-principal" class="table table-hover">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Categoría</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Acción</th>
+            <th>Imagen</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for producto in productos %}
+        <tr>
+            <td>{{ producto.bodega_id }}</td>
+            <td>{{ producto.nombre_categoria }}</td>
+            <td>{{ producto.nombre_producto }}</td>
+            <td>{{ producto.estado }}</td>
+            <td>
+                <img src="/media/{{ producto.imagen }}" class="producto-sm" alt="">
+            </td>
+            <!-- Botón de eliminar producto de bodega, se activa sólo para productos no vendidos -->
+            <td>
+                {% if producto.estado == 'En bodega' %}
+                <a href="{% url 'eliminar_producto_en_bodega' producto.bodega_id %}" class="btn btn-danger btn-sm">
+                    Eliminar
+                </a>
+                {% else %}
+                <button class="btn btn-primary btn-sm disabled" disabled>Eliminar</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock content %}
+
+{% block script %}
+<input type="hidden" id="url_obtener_productos" value="{% url 'obtener_productos' %}">
+<script src="{% static 'core/js/bodega.js' %}"></script>
+{% endblock script %}
